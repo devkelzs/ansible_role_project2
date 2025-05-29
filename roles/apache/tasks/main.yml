@@ -1,0 +1,52 @@
+- name: Install Apache
+  apt:
+    name: apache2
+    state: present
+    update_cache: yes
+
+- name: Ensure Apache is running
+  service:
+    name: apache2
+    state: started
+    enabled: yes
+
+- name: Install tools (curl, tar)
+  apt:
+    name:
+      - curl
+      - tar
+    state: present
+
+- name: Remove default Apache index.html
+  file:
+    path: /var/www/html/index.html
+    state: absent
+
+- name: Download WordPress
+  get_url:
+    url: https://wordpress.org/latest.tar.gz
+    dest: /tmp/wordpress.tar.gz
+
+- name: Extract WordPress
+  unarchive:
+    src: /tmp/wordpress.tar.gz
+    dest: /var/www/html/
+    remote_src: yes
+    extra_opts: ['--strip-components=1']
+    creates: /var/www/html/wp-config-sample.php
+
+- name: Set permissions
+  file:
+    path: /var/www/html
+    recurse: yes
+    owner: www-data
+    group: www-data
+    state: directory
+
+- name: Upload wp-config.php from template
+  template:
+    src: wp-config.php.j2
+    dest: /var/www/html/wp-config.php
+    owner: www-data
+    group: www-data
+    mode: '0644'

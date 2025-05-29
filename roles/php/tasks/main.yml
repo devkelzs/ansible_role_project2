@@ -1,0 +1,13 @@
+- name: Install PHP and required modules
+  apt:
+    name:
+      - php
+      - libapache2-mod-php
+      - php-mysql
+    state: present
+    update_cache: yes
+
+- name: Restart Apache to load PHP
+  service:
+    name: apache2
+    state: restarted

@@ -1,0 +1,33 @@
+- name: Install MySQL Server
+  apt:
+    name: mysql-server
+    state: present
+    update_cache: yes
+
+- name: Start MySQL
+  service:
+    name: mysql
+    state: started
+    enabled: yes
+
+- name: Install MySQL Python bindings
+  apt:
+    name: python3-pymysql
+    state: present
+
+- name: Create WordPress DB
+  mysql_db:
+    name: "{{ db_name }}"
+    state: present
+    login_user: root
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Create WordPress DB User
+  mysql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    priv: "{{ db_name }}.*:ALL"
+    host: localhost
+    state: present
+    login_user: root
+    login_unix_socket: /var/run/mysqld/mysqld.sock

@@ -1,0 +1,10 @@
+- name: Deploy LAMP Stack with wordpress
+  hosts: webservers
+  become: true
+  
+
+  roles: 
+    - firewall
+    - apache
+    - mysql
+    - php   
